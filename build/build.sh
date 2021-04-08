@@ -90,7 +90,7 @@ if [ "$1" == "--version" ]; then
 fi
 ###########################
 
-T2M_PRODUCT=("bitra2")
+T2M_PRODUCT=("fp4")
 
 #Sanitize host toolsi
 LS=`which ls`
