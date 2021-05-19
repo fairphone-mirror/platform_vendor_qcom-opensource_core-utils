@@ -1827,4 +1827,22 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>default</instance>
         </interface>
     </hal>
+    <hal format="hidl" optional="true">
+        <name>vendor.pixelworks.hardware.display</name>
+       <transport>hwbinder</transport>
+        <version>1.1</version>
+        <interface>
+            <name>IIris</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl" optional="true">
+        <name>vendor.pixelworks.hardware.feature</name>
+       <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IIrisFeature</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
 </compatibility-matrix>
