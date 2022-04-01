@@ -488,7 +488,7 @@ function run_qiifa () {
 }
 
 function build_qssi_only () {
-    command "source build/envsetup.sh"
+    command "source $(pwd)/build/envsetup.sh"
     command "python -B $QTI_BUILDTOOLS_DIR/build/makefile-violation-scanner.py"
     command "lunch ${TARGET_QSSI}-${TARGET_BUILD_VARIANT}"
     command "make $QSSI_ARGS"
@@ -499,7 +499,7 @@ function build_qssi_only () {
 }
 
 function build_target_only () {
-    command "source build/envsetup.sh"
+    command "source $(pwd)/build/envsetup.sh"
     command "lunch ${TARGET}-${TARGET_BUILD_VARIANT}"
     command "python -B $QTI_BUILDTOOLS_DIR/build/makefile-violation-scanner.py"
     QSSI_ARGS="$QSSI_ARGS SKIP_ABI_CHECKS=$SKIP_ABI_CHECKS"
@@ -542,7 +542,7 @@ function full_build () {
 }
 
 function nonqssi_legacy_build () {
-    command "source build/envsetup.sh"
+    command "source $(pwd)/build/envsetup.sh"
     if [ "$DP_IMAGES_OVERRIDE" = true ]; then
        ARGS=${ARGS//"--dp_images_path=$DYNAMIC_PARTITIONS_IMAGES_PATH"/}
     fi

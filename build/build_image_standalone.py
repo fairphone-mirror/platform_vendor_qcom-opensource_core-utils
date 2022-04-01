@@ -84,7 +84,7 @@ TARGET_OUT_DIST_ARTIFACTS = (
 
 TARGET_TARGET_FILES_ZIP = "-target_files-*.zip"
 
-TARGET_OTATOOLS_ZIP = "otatools.zip"
+TARGET_OTATOOLS_ZIP = "otatools-r.zip"
 
 # MERGED build's OUT_DIST OTA related artifacts that are optionally backed up
 # along with super.img via "--output_ota" arg (pattern supported):
