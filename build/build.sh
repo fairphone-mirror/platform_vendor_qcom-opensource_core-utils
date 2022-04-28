@@ -223,9 +223,6 @@ MERGED_OTA_ZIP="$DIST_DIR/merged-qssi_${TARGET_PRODUCT}-ota.zip"
 DIST_ENABLED_TARGET_LIST=("holi" "taro" "lahaina" "kona" "sdm710" "sdm845" "msmnile" "sm6150" "trinket" "lito" "bengal" "atoll" "qssi" "qssi_32" "qssi_32go" "bengal_32" "bengal_32go" "msm8937_32go" "msm8937_32" "msm8937_64" "msm8953_32" "msm8953_64" "sdm429w_law" "sdm429w" "msm8937_lily" "monaco_go" "monaco" "monaco_go_aon")
 DIST_ENABLED_TARGET_LIST+=("$T2M_PRODUCT")
 VIRTUAL_AB_ENABLED_TARGET_LIST=("kona" "lito" "taro" "lahaina")
-#[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
-VIRTUAL_AB_ENABLED_TARGET_LIST+=($T2M_PRODUCT)
-#[FOTA][TCT]MODIFIED-END by Ji.Chen,2021/06/25
 DYNAMIC_PARTITION_ENABLED_TARGET_LIST=("holi" "taro" "lahaina" "kona" "msmnile" "sdm710" "lito" "trinket" "atoll" "qssi" "qssi_32" "qssi_32go" "bengal" "bengal_32" "bengal_32go" "sm6150" "msm8937_32go" "msm8937_32" "msm8937_64" "msm8953_32" "msm8953_64" "sdm429w_law" "sdm429w" "msm8937_lily" "monaco_go" "monaco" "monaco_go_aon")
 DYNAMIC_PARTITION_ENABLED_TARGET_LIST+=("$T2M_PRODUCT")
 DYNAMIC_PARTITIONS_IMAGES_PATH=$OUT
@@ -415,53 +412,6 @@ function generate_ota_zip () {
     command "$MERGE_TARGET_FILES_COMMAND"
 }
 
-#[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
-function prepare_tct_ota_files () {
-    log "Processing target_files_extract.zip"
-
-    TCT_FOTA_TARGET_FILES=$OUT/target_files_extract.zip
-
-    SYSTEM_TARGET_FILES="$(find $DIST_DIR -name "qssi*-target_files-*.zip" -print)"
-    log "SYSTEM_TARGET_FILES=$SYSTEM_TARGET_FILES"
-    check_if_file_exists "$SYSTEM_TARGET_FILES"
-
-    OTHER_TARGET_FILES="$(find $DIST_DIR -name "${TARGET_PRODUCT}*-target_files-*.zip" -print)"
-    log "OTHER_TARGET_FILES=$OTHER_TARGET_FILES"
-    check_if_file_exists "$OTHER_TARGET_FILES"
-
-    local merge_config=non_ab
-    if [ "$ENABLE_AB" = true ]; then
-        merge_config=ab
-    fi
-
-    local misc_info="device/qcom/vendor-common/ota_merge_configs/dynamic_partition/$merge_config/tct_merge_config_system_misc_info_keys"
-    local system_list="device/qcom/vendor-common/ota_merge_configs/dynamic_partition/$merge_config/tct_merge_config_system_item_list"
-    local other_list="device/qcom/vendor-common/ota_merge_configs/dynamic_partition/$merge_config/tct_merge_config_other_item_list"
-
-    check_if_file_exists $misc_info
-    check_if_file_exists $system_list
-    check_if_file_exists $other_list
-
-    TCT_MERGE_TARGET_FILES_COMMAND="./build/tools/releasetools/merge_target_files.py \
-        --tct_target_files_extarct_build \
-        --system-target-files $SYSTEM_TARGET_FILES \
-        --other-target-files $OTHER_TARGET_FILES \
-        --output-target-files $TCT_FOTA_TARGET_FILES \
-        --system-misc-info-keys $misc_info \
-        --system-item-list $system_list \
-        --other-item-list $other_list"
-
-    command "$TCT_MERGE_TARGET_FILES_COMMAND"
-
-    # archive full care_map.pb for FOTA diff package.
-    if [ "$ENABLE_AB" = true ]; then
-        command "unzip -o $MERGED_TARGET_FILES META/care_map.pb"
-        command "zip $TCT_FOTA_TARGET_FILES  META/care_map.pb"
-        rm -rf META
-    fi
-}
-#[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
-
 function run_qiifa () {
     QIIFA_SCRIPT="$QCPATH/commonsys-intf/QIIFA-fwk/qiifa_main.py"
     if [ -f $QIIFA_SCRIPT ]; then
@@ -489,9 +439,6 @@ function merge_only () {
     # DIST/OTA specific operations:
     if [ "$DIST_ENABLED" = true ]; then
         generate_ota_zip
-        #[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
-        prepare_tct_ota_files
-        #[FOTA][TCT]MODIFIED-END by Ji.Chen,2021/06/25
     fi
     # Handle dynamic partition case and generate images
     if [ "$BOARD_DYNAMIC_PARTITION_ENABLE" = true ]; then
