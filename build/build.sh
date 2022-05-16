@@ -82,6 +82,7 @@ fi
 ###########################
 
 T2M_PRODUCT=("fp4")
+BUILD_USERNAME=$(id -nu)
 
 #Sanitize host toolsi
 LS=`which ls`
@@ -432,6 +433,12 @@ function build_target_only () {
     command "lunch ${TARGET}-${TARGET_BUILD_VARIANT}"
     QSSI_ARGS="$QSSI_ARGS SKIP_ABI_CHECKS=$SKIP_ABI_CHECKS"
     command "make $QSSI_ARGS"
+    command "cp -rf $DIST_DIR/otatools.zip $DIST_DIR/otatools-r.zip"
+    if [ $BUILD_NUMBER ]; then
+        command "cp -rf $DIST_DIR/${TARGET_PRODUCT}-target_files-${BUILD_NUMBER}.zip $DIST_DIR/lito-target_files-${BUILD_NUMBER}.zip"
+    else
+        command "cp -rf $DIST_DIR/${TARGET_PRODUCT}-target_files-eng.${BUILD_USERNAME}.zip $DIST_DIR/lito-target_files-eng.${BUILD_USERNAME}.zip"
+    fi
     command "run_qiifa"
 }
 
