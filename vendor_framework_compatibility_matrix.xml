@@ -981,6 +981,16 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <instance>default</instance>
         </interface>
     </hal>
+    <!-- MMITest fingerprint Hal-->
+     <hal format="hidl" optional="true">
+       <name>vendor.fpsensor.hardware.fpsensorhidlsvc</name>
+       <transport>hwbinder</transport>
+       <version>2.0</version>
+       <interface>
+         <name>IFpsensorHidlSvc</name>
+         <instance>default</instance>
+       </interface>
+     </hal>
     <hal format="hidl" optional="true">
         <name>vendor.pixelworks.hardware.display</name>
        <transport>hwbinder</transport>
