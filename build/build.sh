@@ -475,6 +475,54 @@ function generate_ota_zip () {
     command "$MERGE_TARGET_FILES_COMMAND"
 }
 
+#[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
+function prepare_tct_ota_files () {
+    log "Processing target_files_extract.zip"
+
+    TCT_FOTA_TARGET_FILES=$OUT/target_files_extract.zip
+
+    FRAMEWORK_TARGET_FILES="$(find $DIST_DIR -name "qssi*-target_files-*.zip" -print)"
+    log "FRAMEWORK_TARGET_FILES=$FRAMEWORK_TARGET_FILES"
+    check_if_file_exists "$FRAMEWORK_TARGET_FILES"
+
+    VENDOR_TARGET_FILES="$(find $DIST_DIR -name "${TARGET_PRODUCT}*-target_files-*.zip" -print)"
+    log "VENDOR_TARGET_FILES=$VENDOR_TARGET_FILES"
+    check_if_file_exists "$VENDOR_TARGET_FILES"
+
+    local misc_info="$DIST_DIR/tct_merge_config_system_misc_info_keys"
+    local system_list="$DIST_DIR/tct_merge_config_system_item_list"
+    local other_list="$DIST_DIR/tct_merge_config_other_item_list"
+
+    check_if_file_exists "$misc_info"
+    check_if_file_exists "$system_list"
+    check_if_file_exists "$other_list"
+
+#    check_if_file_exists "$DIST_DIR/otatools.zip"
+#    log "Unpacking otatools.zip to $OTATOOLS_DIR"
+#    UNZIP_OTATOOLS_COMMAND="unzip -d $OTATOOLS_DIR $DIST_DIR/otatools.zip"
+#    command "$UNZIP_OTATOOLS_COMMAND"
+
+    TCT_MERGE_TARGET_FILES_COMMAND="$OTATOOLS_DIR/bin/merge_target_files \
+        --tct_target_files_extarct_build \
+        --framework-target-files $FRAMEWORK_TARGET_FILES \
+        --vendor-target-files $VENDOR_TARGET_FILES \
+        --output-target-files $TCT_FOTA_TARGET_FILES \
+        --framework-misc-info-keys $misc_info \
+        --framework-item-list $system_list \
+        --vendor-item-list $other_list "
+
+    command "$TCT_MERGE_TARGET_FILES_COMMAND"
+
+    # archive full care_map.pb for FOTA diff package.
+    if [ "$ENABLE_AB" = true ]; then
+        command "unzip -o $MERGED_TARGET_FILES META/*"
+        command "zip $TCT_FOTA_TARGET_FILES  META/*"
+        rm -rf META
+    fi
+}
+#[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
+
+
 function run_qiifa_initialization() {
     QIIFA_IN_SCRIPT="$QCPATH/commonsys-intf/QIIFA-fwk/qiifa_initialization.py"
     QIIFA_TP_SCRIPT="$QCPATH/commonsys-intf/QIIFA-fwk/qiifa_techpackage_initialization.py"
@@ -567,6 +615,9 @@ function merge_only () {
     # DIST/OTA specific operations:
     if [ "$DIST_ENABLED" = true ]; then
         generate_ota_zip
+        #[FOTA][TCT]MODIFIED-BEGIN by Ji.Chen,2021/06/25
+        prepare_tct_ota_files
+        #[FOTA][TCT]MODIFIED-END by Ji.Chen,2021/06/25
     fi
     # Handle dynamic partition case and generate images
     if [ "$BOARD_DYNAMIC_PARTITION_ENABLE" = true ]; then
