@@ -81,6 +81,9 @@ if [ "$1" == "--version" ]; then
 fi
 ###########################
 
+T2M_PRODUCT=("fp5")
+BUILD_USERNAME=$(id -nu)
+
 #Sanitize host toolsi
 LS=`which ls`
 LS=${LS:-ls}
@@ -156,6 +159,7 @@ if [[ "$TARGET_PRODUCT" == "qssi" ]]; then
 fi
 
 QSSI_TARGETS_LIST=("holi" "taro" "lahaina" "sdm710" "sdm845" "msmnile" "sm6150" "kona" "atoll" "trinket" "lito" "bengal" "qssi" "qssi_32" "qssi_32go" "bengal_32" "bengal_32go" "msm8937_lily")
+QSSI_TARGETS_LIST+=("$T2M_PRODUCT")
 QSSI_TARGET_FLAG=0
 SKIP_ABI_CHECKS=true
 
@@ -218,8 +222,10 @@ MERGED_TARGET_FILES="$DIST_DIR/merged-qssi_${TARGET_PRODUCT}-target_files.zip"
 LEGACY_TARGET_FILES="$DIST_DIR/${TARGET_PRODUCT}-target_files-*.zip"
 MERGED_OTA_ZIP="$DIST_DIR/merged-qssi_${TARGET_PRODUCT}-ota.zip"
 DIST_ENABLED_TARGET_LIST=("holi" "taro" "lahaina" "kona" "sdm710" "sdm845" "msmnile" "sm6150" "trinket" "lito" "bengal" "atoll" "qssi" "qssi_32" "qssi_32go" "bengal_32" "bengal_32go" "msm8937_32go" "msm8937_32" "msm8937_64" "msm8953_32" "msm8953_64" "sdm429w_law" "sdm429w" "msm8937_lily" "monaco_go" "monaco" "monaco_go_aon")
+DIST_ENABLED_TARGET_LIST+=("$T2M_PRODUCT")
 VIRTUAL_AB_ENABLED_TARGET_LIST=("kona" "lito" "taro" "lahaina")
 DYNAMIC_PARTITION_ENABLED_TARGET_LIST=("holi" "taro" "lahaina" "kona" "msmnile" "sdm710" "lito" "trinket" "atoll" "qssi" "qssi_32" "qssi_32go" "bengal" "bengal_32" "bengal_32go" "sm6150" "msm8937_32go" "msm8937_32" "msm8937_64" "msm8953_32" "msm8953_64" "sdm429w_law" "sdm429w" "msm8937_lily" "monaco_go" "monaco" "monaco_go_aon")
+DYNAMIC_PARTITION_ENABLED_TARGET_LIST+=("$T2M_PRODUCT")
 DYNAMIC_PARTITIONS_IMAGES_PATH=$OUT
 DP_IMAGES_OVERRIDE=false
 
@@ -427,6 +433,11 @@ function build_target_only () {
     command "lunch ${TARGET}-${TARGET_BUILD_VARIANT}"
     QSSI_ARGS="$QSSI_ARGS SKIP_ABI_CHECKS=$SKIP_ABI_CHECKS"
     command "make $QSSI_ARGS"
+    if [ $BUILD_NUMBER ]; then
+        command "cp -rf $DIST_DIR/${TARGET_PRODUCT}-target_files-${BUILD_NUMBER}.zip $DIST_DIR/lahaina-target_files-${BUILD_NUMBER}.zip"
+    else
+        command "cp -rf $DIST_DIR/${TARGET_PRODUCT}-target_files-eng.${BUILD_USERNAME}.zip $DIST_DIR/lahaina-target_files-eng.${BUILD_USERNAME}.zip"
+    fi
     command "run_qiifa"
 }
 
