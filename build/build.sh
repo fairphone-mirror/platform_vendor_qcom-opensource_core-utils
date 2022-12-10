@@ -91,8 +91,10 @@
 #     Supports 64 bit for qssi and vendor target(s)
 # Version 10:
 #     Modifying the existing 64 bit only configuration for qssi and vendor target(s)
+# Version 11:
+#     Splitting OTA generation from Merge target file for all target(s)
 #
-BUILD_SH_VERSION=10
+BUILD_SH_VERSION=11
 if [ "$1" == "--version" ]; then
     return $BUILD_SH_VERSION
     # Above return will work only if someone source'ed this script (which is expected, need to source the script).
@@ -427,6 +429,7 @@ function generate_dynamic_partition_images () {
 }
 
 function generate_ota_zip () {
+    ENABLE_OTA_XOR_COMPRESSION=false
     log "Processing dist/ota commands:"
 
     FRAMEWORK_TARGET_FILES="$(find $DIST_DIR -name "qssi*-target_files-*.zip" -print)"
@@ -462,7 +465,7 @@ function generate_ota_zip () {
         --framework-misc-info-keys $DIST_DIR/merge_config_system_misc_info_keys \
         --framework-item-list $DIST_DIR/merge_config_system_item_list \
         --vendor-item-list $DIST_DIR/merge_config_other_item_list \
-        --output-ota  $MERGED_OTA_ZIP --allow-duplicate-apkapex-keys"
+        --allow-duplicate-apkapex-keys "
 
     if [ "$ENABLE_AB" = false ]; then
         MERGE_TARGET_FILES_COMMAND="$MERGE_TARGET_FILES_COMMAND --rebuild_recovery"
@@ -472,7 +475,19 @@ function generate_ota_zip () {
         MERGE_TARGET_FILES_COMMAND="$MERGE_TARGET_FILES_COMMAND --rebuild-sepolicy --vendor-otatools=$VENDOR_OTATOOLS"
     fi
 
+    OTA_GENERATE_COMMAND="$OTATOOLS_DIR/bin/ota_from_target_files \
+                          --verbose"
+    if [ "$ENABLE_OTA_XOR_COMPRESSION" = false ]; then
+        OTA_GENERATE_COMMAND="$OTA_GENERATE_COMMAND --enable_vabc_xor=false"
+    else
+        OTA_GENERATE_COMMAND="$OTA_GENERATE_COMMAND --enable_vabc_xor=true"
+    fi
+
+    OTA_GENERATE_COMMAND="$OTA_GENERATE_COMMAND $MERGED_TARGET_FILES \
+                          $MERGED_OTA_ZIP"
+
     command "$MERGE_TARGET_FILES_COMMAND"
+    command "$OTA_GENERATE_COMMAND"
 }
 
 function run_qiifa_initialization() {
