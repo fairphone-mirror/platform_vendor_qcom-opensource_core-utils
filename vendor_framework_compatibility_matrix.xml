@@ -1220,6 +1220,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <name>IIrisFeature</name>
             <instance>default</instance>
         </interface>
+    </hal>
     <hal format="aidl" optional="true">
         <name>vendor.qti.ims.datachannelservice</name>
         <version>1</version>
