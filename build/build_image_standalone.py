@@ -80,6 +80,7 @@ QSSI_TARGET_FILES_ZIP = "" # will be set later, as per lunch
 # TARGET build's OUT_DIST artifacts (pattern supported):
 TARGET_OUT_DIST_ARTIFACTS = (
     'merge_config_*',
+    't2m_merge_config_*',
 )
 
 TARGET_TARGET_FILES_ZIP = "-target_files-*.zip"
