@@ -524,7 +524,8 @@ function prepare_tct_ota_files () {
         --output-target-files $TCT_FOTA_TARGET_FILES \
         --framework-misc-info-keys $misc_info \
         --framework-item-list $system_list \
-        --vendor-item-list $other_list "
+        --vendor-item-list $other_list \
+	--allow-duplicate-apkapex-keys "
 
     command "$TCT_MERGE_TARGET_FILES_COMMAND"
 
