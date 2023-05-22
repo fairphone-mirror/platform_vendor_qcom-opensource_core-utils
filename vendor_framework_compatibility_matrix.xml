@@ -310,7 +310,8 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>cnd</instance>
         </interface>
     </hal>
-    <hal format="hidl" optional="true">
+    <!--Deleted-begin by juanshi for FP5-1101 on 2023-05-12-->
+    <!--<hal format="hidl" optional="true">
         <name>vendor.nxp.hardware.nfc</name>
         <version>1.0-1</version>
         <version>2.0</version>
@@ -334,7 +335,8 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <name>INxpNfcLegacy</name>
             <instance>default</instance>
         </interface>
-    </hal>
+    </hal>-->
+    <!--Deleted-end by juanshi for FP5-1101 on 2023-05-12-->
     <hal format="hidl" optional="true">
         <name>vendor.qti.esepowermanager</name>
         <version>1.0-1</version>
