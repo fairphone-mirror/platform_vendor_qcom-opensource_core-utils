@@ -39,6 +39,8 @@ import glob
 # Dynamically get whitelists from device/qcom/<target>/
 ANDROID_BUILD_TOP = os.environ.get('ANDROID_BUILD_TOP') + '/'
 TARGET_PRODUCT = os.environ.get('TARGET_PRODUCT')
+if TARGET_PRODUCT == "fps":
+    TARGET_PRODUCT = "volcano"
 QCPATH = os.environ.get('QCPATH')
 TARGET_BOARD_PLATFORM = TARGET_PRODUCT
 board_config_files = []
@@ -421,6 +423,11 @@ def extract_product_board_makefile():
     product_config_path_str = "device/qcom/"+TARGET_PRODUCT+"/"+TARGET_PRODUCT+".mk"
 
     #Append BoardConfig to the board config list
+    board_config_files.append(board_config_path_str)
+
+    if os.environ.get('TARGET_PRODUCT') == "fps":
+        board_config_path_str = "device/fairphone/"+os.environ.get('TARGET_PRODUCT')+"/BoardConfig.mk"
+        product_config_path_str = "device/fairphone/"+os.environ.get('TARGET_PRODUCT')+"/"+os.environ.get('TARGET_PRODUCT')+".mk"
     board_config_files.append(board_config_path_str)
 
     #Append target product makefile to the product config list
