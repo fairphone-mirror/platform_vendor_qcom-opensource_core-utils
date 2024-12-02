@@ -296,7 +296,7 @@ QSSI_TARGET_FLAG=1
 # check if our TARGET_PRODUCT is in any of these lists
 if target_product_in_list "${TARGET_PRODUCT_MAPPING_QSSI[@]}"; then
     TARGET_MATCHING_QSSI="qssi"
-elif target_product_in_list "${TARGET_PRODUCT_MAPPING_QSSI_64[@]}"; then
+elif target_product_in_list "${TARGET_PRODUCT_MAPPING_QSSI_64[@]}" "fps"; then
     TARGET_MATCHING_QSSI="qssi_64"
 elif target_product_in_list "${TARGET_PRODUCT_MAPPING_QSSI_WEAR[@]}"; then
     TARGET_MATCHING_QSSI="qssi_wear"
@@ -339,7 +339,7 @@ function log() {
     ${ECHO} "============================================"
 }
 
-for DP_TARGET in "${DYNAMIC_PARTITION_ENABLED_TARGET_LIST[@]}"
+for DP_TARGET in "${DYNAMIC_PARTITION_ENABLED_TARGET_LIST[@]}" "fps"
 do
     if [ "$TARGET_PRODUCT" == "$DP_TARGET" ]; then
         log "${TARGET_PRODUCT} found in Dynamic Parition Enablement List"
@@ -348,7 +348,7 @@ do
     fi
 done
 
-for VIRTUAL_AB_TARGET in "${VIRTUAL_AB_ENABLED_TARGET_LIST[@]}"
+for VIRTUAL_AB_TARGET in "${VIRTUAL_AB_ENABLED_TARGET_LIST[@]}" "fps"
 do
     if [ "$TARGET_PRODUCT" == "$VIRTUAL_AB_TARGET" ]; then
         ENABLE_VIRTUAL_AB=true
@@ -410,7 +410,7 @@ fi
 
 # Check if dist is supported on this target (yet) or not, and override DIST_ENABLED flag.
 IS_DIST_ENABLED_TARGET=false
-for DIST_TARGET in "${DIST_ENABLED_TARGET_LIST[@]}"
+for DIST_TARGET in "${DIST_ENABLED_TARGET_LIST[@]}" "fps"
 do
     if [ "$TARGET_PRODUCT" == "$DIST_TARGET" ]; then
         IS_DIST_ENABLED_TARGET=true
