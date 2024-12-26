@@ -69,6 +69,14 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
          </interface>
     </hal>
     <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.bluetooth_fmd</name>
+         <version>1</version>
+         <interface>
+            <name>IBtFmd</name>
+            <instance>default</instance>
+         </interface>
+    </hal>
+    <hal format="aidl" optional="true">
         <name>vendor.qti.snapdragonServices.qape</name>
          <version>1</version>
          <interface>
@@ -1270,6 +1278,15 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>camerapostprocservice</instance>
         </interface>
     </hal>
+    <!-- Camera AIDL PostProcessing service -->
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.camera.postproc</name>
+        <version>1</version>
+        <interface>
+            <name>IPostProcService</name>
+            <instance>camerapostprocservice</instance>
+        </interface>
+    </hal>
     <!-- Offline Camera service -->
     <hal format="aidl" optional="true">
         <name>vendor.qti.hardware.camera.offlinecamera</name>
@@ -1821,7 +1838,7 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
     </hal>
     <hal format="aidl">
     <name>vendor.qti.hardware.paleventnotifier</name>
-        <version>1</version>
+        <version>1-2</version>
         <interface>
             <name>IPALEventNotifier</name>
             <instance>default</instance>
@@ -1852,6 +1869,39 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
         <version>2.0</version>
         <interface>
             <name>IFpsensorHidlSvc</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <!-- SEC Platform Service -->
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.sec.featuremanager</name>
+        <version>1</version>
+        <interface>
+            <name>IFeatureManager</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.sec.provisioningmanager</name>
+        <version>1</version>
+        <interface>
+            <name>IProvisioningManager</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.sec.datamanager</name>
+        <version>1</version>
+        <interface>
+            <name>IDataManager</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.sec.cloudagent</name>
+        <version>1</version>
+        <interface>
+            <name>ICloudAgent</name>
             <instance>default</instance>
         </interface>
     </hal>
