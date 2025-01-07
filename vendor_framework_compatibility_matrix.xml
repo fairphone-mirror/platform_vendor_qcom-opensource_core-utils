@@ -1878,4 +1878,12 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>default</instance>
         </interface>
     </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.tcl.camera.algoservice</name>
+        <version>2</version>
+        <interface>
+            <name>ITctCameraAlgoService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
 </compatibility-matrix>
