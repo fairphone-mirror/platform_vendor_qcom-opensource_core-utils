@@ -549,6 +549,67 @@ function generate_ota_zip () {
     command "$OTA_GENERATE_COMMAND"
 }
 
+function prepare_fp_ota_files () {
+    ENABLE_OTA_XOR_COMPRESSION=false
+    log "Processing target_files_extract.zip"
+
+    FP_FOTA_TARGET_FILES=$OUT/target_files_extract.zip
+    FRAMEWORK_TARGET_FILES="$(find $DIST_DIR -name "qssi*-target_files-*.zip" -print)"
+    log "FRAMEWORK_TARGET_FILES=$FRAMEWORK_TARGET_FILES"
+    check_if_file_exists "$FRAMEWORK_TARGET_FILES"
+
+    VENDOR_TARGET_FILES="$(find $DIST_DIR -name "${TARGET_PRODUCT}*-target_files-*.zip" -print)"
+    log "VENDOR_TARGET_FILES=$VENDOR_TARGET_FILES"
+    check_if_file_exists "$VENDOR_TARGET_FILES"
+
+    local misc_info="$DIST_DIR/fp_merge_config_system_misc_info_keys"
+    local system_list="$DIST_DIR/fp_merge_config_system_item_list"
+    local other_list="$DIST_DIR/fp_merge_config_other_item_list"
+
+    check_if_file_exists "$misc_info"
+    check_if_file_exists "$system_list"
+    check_if_file_exists "$other_list"
+
+#Remove the entries in merge config files in dist folder when disabling system_ext logical partition
+    if [ "$SYSTEMEXT_SEPARATE_PARTITION_ENABLE" = false ]; then
+        sed -i '/^SYSTEM_EXT/d' $DIST_DIR/fp_merge_config_system_item_list
+        sed -i '/^system_ext/d' $DIST_DIR/fp_merge_config_system_misc_info_keys
+    fi
+
+#    check_if_file_exists "$DIST_DIR/otatools.zip"
+#    log "Unpacking otatools.zip to $OTATOOLS_DIR"
+#    UNZIP_OTATOOLS_COMMAND="unzip -d $OTATOOLS_DIR $DIST_DIR/otatools.zip"
+#    command "$UNZIP_OTATOOLS_COMMAND"
+
+    MERGE_TARGET_FILES_COMMAND="$OTATOOLS_DIR/bin/merge_target_files \
+        --fp_target_files_extarct_build \
+        --path $OTATOOLS_DIR \
+        --framework-target-files $FRAMEWORK_TARGET_FILES \
+        --vendor-target-files $VENDOR_TARGET_FILES \
+        --output-target-files $FP_FOTA_TARGET_FILES \
+        --framework-misc-info-keys $misc_info \
+        --framework-item-list $system_list \
+        --vendor-item-list $other_list \
+        --allow-duplicate-apkapex-keys "
+
+    if [ "$ENABLE_AB" = false ]; then
+        MERGE_TARGET_FILES_COMMAND="$MERGE_TARGET_FILES_COMMAND --rebuild_recovery"
+    fi
+
+    if [ "$REBUILD_SEPOLICY" = true ]; then
+        MERGE_TARGET_FILES_COMMAND="$MERGE_TARGET_FILES_COMMAND --rebuild-sepolicy --vendor-otatools=$VENDOR_OTATOOLS"
+    fi
+
+    command "$MERGE_TARGET_FILES_COMMAND"
+
+    # archive full care_map.pb for FOTA diff package.
+    if [ "$ENABLE_AB" = true ]; then
+        command "unzip -o $MERGED_TARGET_FILES META/*"
+        command "zip $FP_FOTA_TARGET_FILES  META/*"
+        rm -rf META
+    fi
+}
+
 function run_qiifa_initialization() {
     command "check_sandbox_configuration"
     if [[ "$QIIFA_SANDBOX_ENABLED" -eq 1 ]]; then
@@ -715,6 +776,9 @@ function merge_only () {
     # DIST/OTA specific operations:
     if [ "$DIST_ENABLED" = true ]; then
         generate_ota_zip
+        #+ FPS-49. Generate target_files_extract.zip for FOTA.
+        prepare_fp_ota_files
+        #- FPS-49. Generate target_files_extract.zip for FOTA.
     fi
     # Handle dynamic partition case and generate images
     if [ "$BOARD_DYNAMIC_PARTITION_ENABLE" = true ]; then
