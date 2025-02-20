@@ -83,6 +83,7 @@ QSSI_TARGET_FILES_ZIP = "" # will be set later, as per lunch
 # TARGET build's OUT_DIST artifacts (pattern supported):
 TARGET_OUT_DIST_ARTIFACTS = (
     'merge_config_*',
+    'fp_merge_config_*',
 )
 
 TARGET_TARGET_FILES_ZIP = "-target_files-*.zip"
@@ -94,7 +95,7 @@ TARGET_OTATOOLS_ZIP = "otatools.zip"
 BACKUP_MERGED_OUT_DIST_ARTIFACTS = (
     'merge_config_*',
     'merged*-target_files*.zip',
-    'merged*-ota*.zip'
+    'merged*-ota*.zip',
 )
 
 MIN_TMP_FREE_SIZE_IN_GB = 24
