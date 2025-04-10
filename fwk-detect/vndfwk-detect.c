@@ -41,6 +41,11 @@ int isRunningWithVendorEnhancedFramework() {
     bool va_aosp_support = false;
     va_aosp_support = property_get_bool(VALUEADD_AOSP_SUPPORT_PROPERTY, false);
 
+    int forceRet = property_get_int32("debug.vendor.force.va_aosp", -1);
+    if(forceRet != -1) {
+        return forceRet;
+    }
+
     if (va_aosp_support)
         return 1;
 
