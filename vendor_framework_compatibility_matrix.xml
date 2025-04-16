@@ -737,6 +737,16 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>default</instance>
         </interface>
     </hal>
+    <!-- DSP Service aidl -->
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.dsp</name>
+        <version>1</version>
+        <interface>
+            <name>IDspService</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <!-- DSP Service hidl -->
     <hal format="hidl" optional="true">
         <name>vendor.qti.hardware.dsp</name>
         <version>1.0</version>
