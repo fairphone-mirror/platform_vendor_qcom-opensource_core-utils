@@ -1748,12 +1748,4 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
             <instance>default</instance>
         </interface>
     </hal>
-        <hal format="hidl" optional="true">
-        <name>vendor.focaltech.hardware.biometrics.fingerprint</name>
-        <version>1.0</version>
-        <interface>
-            <name>IFocalFingerprint</name>
-            <instance>default</instance>
-       </interface>
-    </hal>
 </compatibility-matrix>
