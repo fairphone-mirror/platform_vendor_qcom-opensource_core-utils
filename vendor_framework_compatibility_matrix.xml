@@ -69,6 +69,14 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
          </interface>
     </hal>
     <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.bhs</name>
+         <version>1</version>
+         <interface>
+            <name>Ibhs</name>
+            <instance>default</instance>
+         </interface>
+    </hal>
+    <hal format="aidl" optional="true">
         <name>vendor.qti.hardware.bluetooth_fmd</name>
          <version>1</version>
          <interface>
@@ -1915,7 +1923,7 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
     </hal>
     <hal format="aidl" optional="true">
         <name>vendor.qti.hardware.qrs.qrsprovider</name>
-        <version>1</version>
+        <version>1-2</version>
         <interface>
             <name>IQrsProvider</name>
             <instance>default</instance>
