@@ -1532,7 +1532,7 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
     </hal>
     <hal format="aidl" optional="true">
         <name>vendor.qti.hardware.display.config</name>
-        <version>1-13</version>
+        <version>1-14</version>
         <interface>
             <name>IDisplayConfig</name>
             <instance>default</instance>
@@ -1590,7 +1590,7 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
     </hal>
      <hal format="aidl" optional="true">
         <name>vendor.qti.snapdragonServices</name>
-        <version>1</version>
+        <version>1-2</version>
         <interface>
             <name>ISnapdragonServices</name>
             <instance>default</instance>
@@ -1875,6 +1875,14 @@ SPDX-License-Identifier: BSD-3-Clause-Clear.
         <version>1-2</version>
         <interface>
             <name>IPALEventNotifier</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.qti.hardware.uwbtpi</name>
+        <version>1</version>
+        <interface>
+            <name>IUwbTpi</name>
             <instance>default</instance>
         </interface>
     </hal>

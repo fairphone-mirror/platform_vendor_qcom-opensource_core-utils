@@ -111,7 +111,11 @@
 #     Supports --techpack argument to build techpack target(s)
 #     Use options: --techpack <teckpack target(s)>
 #     Usage: ./build.sh dist --teckpack -j32 <teckpack target(s)>
-BUILD_SH_VERSION=16
+# Version 17:
+#     Build utilizes the TARGET_RELEASE set by the lunch without overriding.
+# Version 18:
+#     Remove TEST_MAPPING files from bazel-cache.
+BUILD_SH_VERSION=18
 if [ "$1" == "--version" ]; then
     return $BUILD_SH_VERSION
     # Above return will work only if someone source'ed this script (which is expected, need to source the script).
@@ -328,7 +332,7 @@ VIRTUAL_AB_ENABLED_TARGET_LIST=("kona" "lito" "taro" "kalama" "parrot" "kalama64
 DYNAMIC_PARTITION_ENABLED_TARGET_LIST=("holi" "taro" "kalama" "parrot" "kalama64" "pineapple" "blair" "sun" "lahaina" "kona" "msmnile" "sdm710" "lito" "trinket" "atoll" "qssi" "qssi_64" "qssi_32" "qssi_32go" "bengal" "bengal_32" "bengal_32go" "sm6150" "sdm660_64" "msm8937_lily" "bengal_515" "monaco" "crow" "niobe" "anorak" "parrot66" "volcano" "canoe" "vienna" "qssi_wear" "monaco_aon_64" "pitti" "pitti_32go" "vienna64" "lahaina612" "art")
 DYNAMIC_PARTITIONS_IMAGES_PATH=$OUT
 DP_IMAGES_OVERRIDE=false
-TECHPACK_LIST=("camera_tp" "display_tp" "video_tp" "audio_tp" "sensors_tp" "cv_tp" "xr_tp" "btfm_tp" "wlan_tp" "hexlp_tp" "graphics_tp" )
+TECHPACK_LIST=("camera_tp" "display_tp" "video_tp" "audio_tp" "sensors_tp" "cv_tp" "xr_tp" "btfm_tp" "wlan_tp" "hexlp_tp" "graphics_tp" "dspplatform_tp" )
 
 OTATOOLS_DIR="$(mktemp --directory)"
 MERGED_TARGET_FILES_DIR="$(mktemp --directory)"
@@ -695,12 +699,12 @@ function run_qiifa_dependency_checker() {
 
 function build_qssi_only () {
     command "source build/envsetup.sh"
-    if [ "$TARGET_RELEASE" = "next" ] || [ "$TARGET_RELEASE" = "trunk_food" ];then
-      command "lunch ${TARGET_PRODUCT}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
+    if [ -n "$TARGET_RELEASE" ]; then
+    command "lunch ${TARGET_PRODUCT}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
     else
-      command "lunch ${TARGET_PRODUCT}-${TARGET_BUILD_VARIANT}"
+    echo "error:No release config set for target; please set TARGET_RELEASE, using 'lunch <target>-<release>-<build_type>'"
+    exit 1
     fi
-
     # When --sandbox_debug is passed as arg to Bazel, inaccessibleHelperDir gets
     # created with limited perms. Because of which find command fails and leads
     # to build failure in vendor builds. Update the perms to make sure find cmd
@@ -719,8 +723,8 @@ function build_qssi_only () {
         log "Cleaning Bazel Cache for incremental builds..."
         chmod -R 0755 "${KP_OUT_DIR}"
 
-        # Remove METADATA files present inside Bazel-Cache
-        find "${KP_OUT_DIR}" \( -name METADATA \) -delete
+        # Remove METADATA and TEST_MAPPING files present inside Bazel-Cache
+        find "${KP_OUT_DIR}" \( -name METADATA -o -name TEST_MAPPING \) -delete
     fi
 
     command "python -B $QTI_BUILDTOOLS_DIR/build/makefile-violation-scanner.py"
@@ -733,12 +737,12 @@ function build_qssi_only () {
 
 function build_target_only () {
     command "source build/envsetup.sh"
-    if [ "$TARGET_RELEASE" = "next" ] || [ "$TARGET_RELEASE" = "trunk_food" ];then
-      command "lunch ${TARGET}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
+    if [ -n "$TARGET_RELEASE" ]; then
+    command "lunch ${TARGET_PRODUCT}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
     else
-      command "lunch ${TARGET}-${TARGET_BUILD_VARIANT}"
+    echo "error:No release config set for target; please set TARGET_RELEASE, using 'lunch <target>-<release>-<build_type>'"
+    exit 1
     fi
-
     # When --sandbox_debug is passed as arg to Bazel, inaccessibleHelperDir gets
     # created with limited perms. Because of which find command fails and leads
     # to build failure in vendor builds. Update the perms to make sure find cmd
@@ -757,8 +761,8 @@ function build_target_only () {
         log "Cleaning Bazel Cache for incremental builds..."
         chmod -R 0755 "${KP_OUT_DIR}"
 
-        # Remove METADATA files present inside Bazel-Cache
-        find "${KP_OUT_DIR}" \( -name METADATA \) -delete
+        # Remove METADATA and TEST_MAPPING files present inside Bazel-Cache
+        find "${KP_OUT_DIR}" \( -name METADATA -o -name TEST_MAPPING \) -delete
     fi
 
     command "python -B $QTI_BUILDTOOLS_DIR/build/makefile-violation-scanner.py"
@@ -824,8 +828,8 @@ function nonqssi_legacy_build () {
         log "Cleaning Bazel Cache for incremental builds..."
         chmod -R 0755 "${KP_OUT_DIR}"
 
-        # Remove METADATA files present inside Bazel-Cache
-        find "${KP_OUT_DIR}" \( -name METADATA \) -delete
+        # Remove METADATA and TEST_MAPPING files present inside Bazel-Cache
+        find "${KP_OUT_DIR}" \( -name METADATA -o -name TEST_MAPPING \) -delete
     fi
 
     command "make $ARGS"
@@ -874,11 +878,13 @@ function build_techpack_only () {
         done
     fi
     command "source build/envsetup.sh"
-    if [ "$TARGET_RELEASE" = "next" ] || [ "$TARGET_RELEASE" = "trunk_food" ];then
-      command "lunch ${TARGET}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
+    if [ -n "$TARGET_RELEASE" ]; then
+    command "lunch ${TARGET_PRODUCT}-${TARGET_RELEASE}-${TARGET_BUILD_VARIANT}"
     else
-      command "lunch ${TARGET}-${TARGET_BUILD_VARIANT}"
+    echo "error:No release config set for target; please set TARGET_RELEASE, using 'lunch <target>-<release>-<build_type>'"
+    exit 1
     fi
+
     command "python -B $QTI_BUILDTOOLS_DIR/build/makefile-violation-scanner.py"
     QSSI_ARGS="$QSSI_ARGS SKIP_ABI_CHECKS=$SKIP_ABI_CHECKS"
     command "run_qiifa_initialization"
@@ -914,6 +920,14 @@ function build_techpack_only_non_qssi () {
     command "source build/envsetup.sh"
     command "make $ARGS"
 }
+
+
+
+# Check if TARGET_PRODUCT is defined
+if [ -z "$TARGET_PRODUCT" ]; then
+    echo "error:No target product; please set TARGET_PRODUCT, using 'lunch <target>-<release>-<build_type>'"
+    exit 1
+fi
 
 # For non-QSSI targets
 if [ $QSSI_TARGET_FLAG -eq 0 ]; then
