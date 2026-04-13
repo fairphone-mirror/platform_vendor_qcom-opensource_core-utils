@@ -147,7 +147,10 @@ def get_commonsys_intf_project_from_manifest():
     global manifest_artifacts
     project_list_paths = []
     commonsys_intf_group_list = []
-    manifest_root = parse_xml_file(croot + "/.repo/manifest.xml")
+    if os.path.exists(croot + "/.repo/manifests/default.xml"):
+      manifest_root = parse_xml_file(croot + "/.repo/manifests/default.xml")
+    else:
+      manifest_root = parse_xml_file(croot + "/.repo/manifests/pwmanifest.xml")
     for project in manifest_root.findall("project"):
         git_project_path = str(project.attrib.get('path'))
         aosp_flag = project.attrib.get('x-prj-type')
